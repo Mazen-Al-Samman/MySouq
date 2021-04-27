@@ -62,8 +62,8 @@ class FieldAssign extends \yii\db\ActiveRecord
         return $this->hasOne(Field::className(), ['id' => 'field_id']);
     }
 
-    public function get_fields_for_country($country_id) {
-        $fields = $this->find()->where(['country_id' => $country_id])->all();
+    public function get_fields_for_country($country_id, $cat_id) {
+        $fields = $this->find()->where(['country_id' => $country_id, 'cat_id' => $cat_id])->all();
         return $fields;
     }
 }

@@ -51,4 +51,8 @@ class Option extends \yii\db\ActiveRecord
     public function getTitleById($id) {
         return $this->find()->select(['title'])->where(['id' => $id])->all();
     }
+
+    public function get_options_for_field($field_id) {
+        return $this->find()->where(['=', 'field_id', $field_id])->all();
+    }
 }

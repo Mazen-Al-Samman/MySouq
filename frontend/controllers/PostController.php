@@ -113,4 +113,24 @@ class PostController extends \yii\web\Controller
             return $this->redirect(['site/index']);
         }
     }
+
+    public function actionParams($cat_id) {
+        $country_id = Yii::$app->user->identity->country_id;
+        $field_assign_model = new FieldAssign();
+        $options_model = new Option();
+        $fields = ($field_assign_model->get_fields_for_country($country_id, $cat_id));
+        $fields_length = count($fields);
+        $result_array = [];
+        for ($i = 0; $i < $fields_length; $i++) { 
+            $obj = [];
+            $field = $fields[$i];
+            foreach ($field as $key => $value) {
+                $obj[$key] = $value;
+            }
+            $options = $options_model->get_options_for_field($obj['field_id']);
+            $result_array[$i]['field'] = $obj;
+            $result_array[$i]['options'] = $options;
+        }
+        return Json::encode($result_array);
+    }
 }
