@@ -10,8 +10,8 @@ use common\models\Category;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
-$json_options = Json::encode($options);
-$json_fields = Json::encode($fields);
+// $json_options = Json::encode($options);
+// $json_fields = Json::encode($fields);
 
 $this->title = 'New Post';
 $this->params['breadcrumbs'][] = $this->title;
@@ -65,8 +65,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php 
 $this->registerJs("
-    let json_fields = $json_fields;
-    let json_options = $json_options;
     let selected_cat = 1;
     $(window).on('load', function() {
         $('#exampleModal').modal('show');
@@ -79,24 +77,23 @@ $this->registerJs("
         selected_cat = $('#cat').val();
         $('#exampleModal').modal('hide');
         $('#section').append(`<input type='hidden' name='cat_id' value=` + selected_cat + `>`);
-        for (let i = 0; i < json_fields.length; i++){
-            let obj = json_fields[i];
-            console.log(obj['label']);
-            if(obj['cat_id'] == selected_cat) {
-                $('#section').append(function(){
-                    let html = `<label>` + obj['label'] +`</label>`;
-                    html += `<select name=field` + obj['field_id'] + ` class='form-control mb-4'>`;
-                    for (let j = 0; j < json_options.length; j++){
-                        let opt_obj = json_options[j];
-                        if (opt_obj['field_id'] == obj['field_id']){
-                            html += `<option value=` + opt_obj['id'] + `>` + opt_obj['title'] + `</option>`
-                        }
+        $.ajax ({
+            url: `http://localhost:8080/mysouq/frontend/web/index.php?r=post%2Fparams&cat_id=` + selected_cat,
+            success: function(response) {
+                res = JSON.parse(response);
+                for (let i = 0; i < res.length; i++) {
+                    let field = res[i]['field'];
+                    let option = res[i]['options'];
+                    let html = `<label>` + field.label +`</label>`;
+                    html += `<select name=field` + field.field_id + ` class='form-control mb-4'>`;   
+                    for (let j = 0; j < option.length; j++) {
+                        html += `<option value=` + option[j].id + `>` + option[j].title + `</option>`
                     }
                     html += `</select>`;
-                    return html;
-                });
+                    $('#section').append(html);
+                }
             }
-        }
+        })
     });
 ")
 ?>
