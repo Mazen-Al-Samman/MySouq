@@ -29,12 +29,6 @@ class PostController extends \yii\web\Controller
         $value_model = new Value();
         $posts_model = new Posts();
 
-        // Get all fields for a specific country.
-        // $fields = $field_assign_model->get_fields_for_country(Yii::$app->user->identity->country_id);
-
-        // get all options
-        // $options = $option_model->get_all_options();
-
         if ($model->load(Yii::$app->request->post())) {
 
             // Data for mongoDB posts.
@@ -77,8 +71,6 @@ class PostController extends \yii\web\Controller
 
         return $this->render('index', [
             'model' => $model,
-            // 'fields' => $fields,
-            // 'options' => $options
         ]);
     }
 
