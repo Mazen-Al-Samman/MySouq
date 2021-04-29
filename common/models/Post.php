@@ -112,7 +112,12 @@ class Post extends \yii\db\ActiveRecord
 
     // Function will block all posts that contains a specific word.
     public function block_all_posts_that_contains($word) {
-        $posts = $this->find()->where(['like', 'LOWER(title)', "%$word%", false])->andWhere(['status_id' => [1,2]])->orWhere(['like', 'LOWER(description)', "%$word%", false])->andWhere(['status_id' => [1,2]])->all();
+        $posts = $this->find()->where(['status_id' => [1,2]])->andWhere([
+        'OR',
+        ['like', 'LOWER(title)', "%$word%", false],
+        ['like', 'LOWER(description)', "%$word%", false]
+        ])->all();
+        
         foreach ($posts as $post) {
             $this->block_post(2, $post->id);
         }

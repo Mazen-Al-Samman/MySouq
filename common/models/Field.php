@@ -79,4 +79,8 @@ class Field extends \yii\db\ActiveRecord
     public function getTitleById($id) {
         return $this->find()->select(['title'])->where(['id' => $id])->all();
     }
+
+    public function get_fields($cat_id, $country_id) {
+        return $this->find()->where(['=', 'cat_id', $cat_id])->andWhere(['=', 'country_id', $country_id])->all();
+    }
 }

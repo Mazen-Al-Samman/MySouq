@@ -11,6 +11,7 @@ use common\models\Category;
 use common\models\Posts;
 use common\classes\RedisCache;
 use yii\helpers\Json;
+use yii\helpers\Url;
 use Yii;
 
 class PostController extends \yii\web\Controller
@@ -28,12 +29,6 @@ class PostController extends \yii\web\Controller
         $model = new Post();
         $value_model = new Value();
         $posts_model = new Posts();
-
-        // Get all fields for a specific country.
-        $fields = $field_assign_model->get_fields_for_country(Yii::$app->user->identity->country_id);
-
-        // get all options
-        $options = $option_model->get_all_options();
 
         if ($model->load(Yii::$app->request->post())) {
 
@@ -77,8 +72,7 @@ class PostController extends \yii\web\Controller
 
         return $this->render('index', [
             'model' => $model,
-            'fields' => $fields,
-            'options' => $options
+            'url' => Url::base()
         ]);
     }
 
@@ -112,5 +106,25 @@ class PostController extends \yii\web\Controller
         } else {
             return $this->redirect(['site/index']);
         }
+    }
+
+    public function actionParams($cat_id) {
+        $country_id = Yii::$app->user->identity->country_id;
+        $field_assign_model = new FieldAssign();
+        $options_model = new Option();
+        $fields = ($field_assign_model->get_fields_for_country($country_id, $cat_id));
+        $fields_length = count($fields);
+        $result_array = [];
+        for ($i = 0; $i < $fields_length; $i++) { 
+            $obj = [];
+            $field = $fields[$i];
+            foreach ($field as $key => $value) {
+                $obj[$key] = $value;
+            }
+            $options = $options_model->get_options_for_field($obj['field_id']);
+            $result_array[$i]['field'] = $obj;
+            $result_array[$i]['options'] = $options;
+        }
+        return Json::encode($result_array);
     }
 }
