@@ -32,9 +32,9 @@ foreach ($posts as $post) {
         </div>
         <hr>
         <?php if ($post->status_id == 2) { ?>
-            <?=Html::a('Accept', ['site/accept', 'id' => $post->id], ['class' => 'btn-success float-left btn', 'onclick' => "return confirm('Are you sure you want to aceept this post?')"])?>
+            <?=Html::a('Accept', ['site/accept', 'id' => $post->id], ['class' => 'btn-success float-left font-poppins-400 btn', 'onclick' => "return confirm('Are you sure you want to aceept this post?')"])?>
         <?php } ?>
-        <?=Html::a('Block', ['site/block', 'id' => $post->id], ['class' => 'btn-danger float-right btn', 'onclick' => "return confirm('Are you sure you want to block this post?')"])?>
+        <?=Html::a('Block', ['site/block', 'id' => $post->id], ['class' => 'btn-danger float-right font-poppins-400 btn', 'onclick' => "return confirm('Are you sure you want to block this post?')"])?>
       </div>
     </div>
     </div>

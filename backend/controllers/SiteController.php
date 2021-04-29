@@ -8,7 +8,7 @@ use yii\filters\AccessControl;
 use common\models\LoginForm;
 use common\models\Post;
 use common\models\User;
-
+use yii\helpers\Json;
 /**
  * Site controller
  */

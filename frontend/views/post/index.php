@@ -10,9 +10,6 @@ use common\models\Category;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
-// $json_options = Json::encode($options);
-// $json_fields = Json::encode($fields);
-
 $this->title = 'New Post';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -65,6 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php 
 $this->registerJs("
+    let site_url = `$url`;
     let selected_cat = 1;
     $(window).on('load', function() {
         $('#exampleModal').modal('show');
@@ -78,7 +76,7 @@ $this->registerJs("
         $('#exampleModal').modal('hide');
         $('#section').append(`<input type='hidden' name='cat_id' value=` + selected_cat + `>`);
         $.ajax ({
-            url: `http://localhost:8080/mysouq/frontend/web/index.php?r=post%2Fparams&cat_id=` + selected_cat,
+            url: site_url + `/index.php?r=post%2Fparams&cat_id=` + selected_cat,
             success: function(response) {
                 res = JSON.parse(response);
                 for (let i = 0; i < res.length; i++) {

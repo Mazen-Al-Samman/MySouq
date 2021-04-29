@@ -11,6 +11,7 @@ use common\models\Category;
 use common\models\Posts;
 use common\classes\RedisCache;
 use yii\helpers\Json;
+use yii\helpers\Url;
 use Yii;
 
 class PostController extends \yii\web\Controller
@@ -71,6 +72,7 @@ class PostController extends \yii\web\Controller
 
         return $this->render('index', [
             'model' => $model,
+            'url' => Url::base()
         ]);
     }
 
