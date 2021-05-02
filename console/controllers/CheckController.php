@@ -17,7 +17,7 @@ class CheckController extends \yii\web\Controller
 
     public function actionCheckposts() {
         $post = new Post();
-        $posts = $post->block_all_posts_that_contains('كلية');
+        $posts = $post->block_all_posts_that_contains(2, 'كلية');
         echo Json::encode($posts);
         return;
     }
