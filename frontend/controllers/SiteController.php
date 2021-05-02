@@ -20,6 +20,7 @@ use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use common\models\Country;
 use yii\helpers\Json;
+use common\repositories\postsRepository;
 
 /**
  * Site controller
@@ -74,7 +75,7 @@ class SiteController extends Controller
         }
 
         $user_id = Yii::$app->user->id;
-        $post_model = new Posts();
+        $post_model = new postsRepository();
         $posts = $post_model->get_all_posts_for_user($user_id, $first_row_id, $posts_per_page);
         return $this->render('myPosts', ['posts' => $posts]);
     }

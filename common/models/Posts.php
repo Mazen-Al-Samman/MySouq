@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\classes\RedisCache;
 
 /**
  * This is the model class for collection "posts".
@@ -82,24 +83,58 @@ class Posts extends \yii\mongodb\ActiveRecord
         return false;
     }
 
+    public function get_all_posts() {
+        $posts = $this->find()->where(['status_id' => [2]])->orderBy(['id' => SORT_DESC])->all();
+        return $posts;
+    }
+
     public function get_all_posts_for_user($user_id, $first_row_id = -1, $posts_per_page = -1) {
         if ($first_row_id == -1) {
-            $posts = $this->find()->where(['status' => ['Pending', 'Live'], 'user_id' => $user_id])->limit(($posts_per_page == -1)?3 : $posts_per_page)->orderBy(['post_id' => SORT_DESC])->all();
+            $posts = self::find()->where(['status' => ['Pending', 'Live'], 'user_id' => $user_id])->limit(($posts_per_page == -1)?3 : $posts_per_page)->orderBy(['post_id' => SORT_DESC])->all();
         } else {
-            $posts = $this->find()->where(['status' => ['Pending', 'Live'], 'user_id' => $user_id])->limit(($posts_per_page == -1)?3 : $posts_per_page)->orderBy(['post_id' => SORT_DESC])->andWhere(['<', 'post_id', (int)($first_row_id)])->all();
+            $posts = self::find()->where(['status' => ['Pending', 'Live'], 'user_id' => $user_id])->limit(($posts_per_page == -1)?3 : $posts_per_page)->orderBy(['post_id' => SORT_DESC])->andWhere(['<', 'post_id', (int)($first_row_id)])->all();
         }
         return $posts;
     }
 
-    public function setStatus($post_id, $new_status) {
-        $post = $this->find()->where(['=', 'post_id', (int)($post_id)])->all();
-        $post[0]->status = $new_status;
-        $post[0]->save();
-        return $post[0];
+    public function block_all_posts_that_contains($word) {
+        $posts = $this->find()->where(['status_id' => [1,2]])->andWhere([
+        'OR',
+        ['like', 'LOWER(title)', "%$word%", false],
+        ['like', 'LOWER(description)', "%$word%", false]
+        ])->all();
+        
+        foreach ($posts as $post) {
+            $this->block_post(2, $post->id);
+        }
+        return $posts;
     }
 
-    public function getPostById($post_id) {
-        $post = $this->find()->where(['=', 'post_id', $post_id])->one();
+    public function change_post_status($post_id, $new_status) {
+        $post = self::find()->where(['=', 'post_id', (int)($post_id)])->one();
+        $post->status = $new_status;
+        $post->save();
         return $post;
+    }
+
+    public function get_post_by_id($post_id) {
+        $post = self::find()->where(['=', 'post_id', $post_id])->one();
+        return $post;
+    }
+
+    public function cache_post($post_id, $status_id) {
+        $redis = new RedisCache();
+        if ($status_id == 1) {
+            $post_details = self::change_post_status($post_id, 'Live');
+            $exist = $redis->exists($post_id);
+            if ($exist) {
+                $redis->cachePost($post_details, $post_id, 'Live');
+            }
+        } else {
+            $exist = $redis->exists($post_id);
+            if ($exist) {
+                $redis->RemovePost($post_id);
+            }
+        }
     }
 }

@@ -80,7 +80,8 @@ class PostController extends \yii\web\Controller
     {
         $post = new Post();
         $redis = new RedisCache();
-        $post->delete_post(Yii::$app->user->identity->user_role, $id);
+        $role_id = Yii::$app->user->identity->user_role;
+        $post->change_post_status($role_id, $id, 'Delete', 4, 'Deleted');
         $redis->RemovePost($id);
         return $this->redirect(['site/index']);
     }
@@ -95,7 +96,7 @@ class PostController extends \yii\web\Controller
         } else {
             $posts_model = new Posts();
             $post_id = (int)($id);
-            $post_details = $posts_model->getPostById($post_id);
+            $post_details = $posts_model->get_post_by_id($post_id);
             $redis->cachePost($post_details, $post_id, $post_details['status']);
         }
 

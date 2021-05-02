@@ -124,70 +124,34 @@ class Post extends \yii\db\ActiveRecord
         return $posts;
     }
 
-    // Function will block the post [ change status to 3 ].
-    public function block_post ($role_id, $post_id) {
+    // This function for changing the post status after an action.
+    public function change_post_status($role_id, $post_id, $action, $status_id, $status) {
         $post = $this->findOne($post_id);
         $pre_status = $post->status_id;
-        $post->status_id = 3;
+        $post->status_id = $status_id;
         if ($post->save()) {
             $post_transactions = new PostsLifeCycle();
             $posts = new Posts();
-            $posts->setStatus($post_id, 'Blocked');
-            $post_transactions->create_new_transaction($role_id, $post_id, 'Block', $pre_status, 3, date("Y/m/d"));
+            $post_details = $posts->change_post_status($post_id, $status);
+            $post_transactions->create_new_transaction($role_id, $post_id, $action, $pre_status, $status_id, date("Y/m/d"));
+            self::cache_post($post_id, $status_id, $post_details);
         }
-
-        $redis = new RedisCache();
-        $post_key = $post_id;
-        $exist = $redis->exists($post_key);
-        if ($exist) {
-            $redis->RemovePost($post_key);
-        }
-
         return true;
     }
 
-    // Function will accept the post [ change status to 1 ].
-    public function accept_post ($role_id, $post_id) {
-        $post = $this->findOne($post_id);
-        $pre_status = $post->status_id;
-        $post->status_id = 1;
-        $post_details = '';
-        if ($post->save()) {
-            $post_transactions = new PostsLifeCycle();
-            $posts = new Posts();
-            $post_details = $posts->setStatus($post_id, 'Live');
-            $post_transactions->create_new_transaction($role_id, $post_id, 'Accept', $pre_status, 1, date("Y/m/d"));
-        }
-
+    // This function will recache the post after changing the status.
+    public function cache_post($post_id, $status_id, $post_details) {
         $redis = new RedisCache();
-        $post_key = $post_id;
-        $exist = $redis->exists($post_key);
-        if ($exist) {
-            $redis->cachePost($post_details, $post_id, 'Live');
+        if ($status_id == 1) {
+            $exist = $redis->exists($post_id);
+            if ($exist) {
+                $redis->cachePost($post_details, $post_id, 'Live');
+            }
+        } else {
+            $exist = $redis->exists($post_id);
+            if ($exist) {
+                $redis->RemovePost($post_id);
+            }
         }
-
-        return true;
-    }
-
-    // Function will delte the post [ change status to 4 ].
-    public function delete_post ($role_id, $post_id) {
-        $post = $this->findOne($post_id);
-        $pre_status = $post->status_id;
-        $post->status_id = 4;
-        if ($post->save()) {
-            $post_transactions = new PostsLifeCycle();
-            $posts = new Posts();
-            $posts->setStatus($post_id, 'Deleted');
-            $post_transactions->create_new_transaction($role_id, $post_id, 'Delete', $pre_status, 4, date("Y/m/d"));
-        }
-
-        $redis = new RedisCache();
-        $post_key = $post_id;
-        $exist = $redis->exists($post_key);
-        if ($exist) {
-            $redis->RemovePost($post_key);
-        }
-
-        return true;
     }
 }

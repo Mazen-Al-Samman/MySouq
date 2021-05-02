@@ -6,9 +6,9 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
-use common\models\Post;
 use common\models\User;
 use yii\helpers\Json;
+use common\repositories\postRepository;
 /**
  * Site controller
  */
@@ -59,20 +59,22 @@ class SiteController extends Controller
             return $this->redirect(['site/login']);
         }
     
-        $post = new Post();
+        $post = new postRepository();
         $posts = $post->get_all_posts();
         return $this->render('index', ['posts' => $posts]);
     }
 
     public function actionAccept($id) {
-        $post = new Post();
-        $post->accept_post(Yii::$app->user->identity->user_role, $id);
+        $post = new postRepository();
+        $role_id = Yii::$app->user->identity->user_role;
+        $post->change_post_status($role_id, $id, 'Accept', 1, 'Live');
         return $this->redirect(['site/index']);
     }
 
     public function actionBlock($id) {
-        $post = new Post();
-        $post->block_post(Yii::$app->user->identity->user_role, $id);
+        $post = new postRepository();
+        $role_id = Yii::$app->user->identity->user_role;
+        $post->change_post_status($role_id, $id, 'Block', 3, 'Blocked');
         return $this->redirect(['site/index']);
     }
 
