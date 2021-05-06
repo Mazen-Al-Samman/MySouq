@@ -174,4 +174,16 @@ class Post extends \yii\db\ActiveRecord
         $data = $data->all();
         return $data;
     }
+
+    public function get_post($id) {
+        $query = new Query();
+        $data = $query
+        ->select(['post.*', 'status.title as status', 'category.title as category'])
+        ->from('post')
+        ->join('INNER JOIN', 'status', 'post.status_id = status.id')
+        ->join('INNER JOIN', 'category', 'post.cat_id = category.id')
+        ->where(['post.id' => $id])
+        ->one();
+        return $data;
+    }
 }

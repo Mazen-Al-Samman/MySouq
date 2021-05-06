@@ -5,6 +5,10 @@ namespace console\controllers;
 use Yii;
 use common\classes\RedisCache;
 use yii\helpers\Json;
+use common\models\Value;
+use common\models\Posts;
+use common\models\Post;
+
 
 class QueueController extends \yii\web\Controller
 {
@@ -17,12 +21,20 @@ class QueueController extends \yii\web\Controller
     }
 
     public function actionStart() {
+
+        $postsModel = new Posts();
+        $postModel = new Post();
+        $valueModel = new Value();
         $redis = new RedisCache();
-        // $data = $redis->BRPOP('queue',2);
-        $redis->LPUSH('queue', 2);
-        // echo Json::encode($data);
-        // if ($data) {
-            
-        // }
+
+        while(true) {
+            $data = $redis->RPOP('queue');
+            if ($data) {
+                $post_data = $postModel->get_post(($data));
+                $params = $valueModel->postCustomParams(($data));
+                $postsModel->create_or_update_post($post_data, $params);
+                echo "Posts updated";
+            }
+        }
     }
 }

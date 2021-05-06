@@ -3,8 +3,8 @@ namespace common\classes;
 use Yii;
 use yii\redis\Cache;
 
-class RedisCache extends yii\redis\Cache {
-    
+class RedisCache extends Cache {
+
     // A new function to get all keys from the Redis.
     public function getkeys() {
         return $this->redis->executeCommand('keys', array('*'));
