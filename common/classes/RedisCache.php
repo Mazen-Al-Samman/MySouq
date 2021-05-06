@@ -89,5 +89,15 @@ class RedisCache extends yii\redis\Cache {
         $this->CreatePost($post_key, $post_data, $params);
         return true;
     }
+
+    public function LPUSH($key, $value) {
+        $cmd = $this->redis->executeCommand("LPUSH {$key} {$value}");
+        return (bool) $cmd;
+    }
+
+    public function BRPOP($key, $time) {
+        $cmd = $this->redis->executeCommand("BRPOP {$key} {$time}");
+        return $cmd;
+    }
 }
 ?>
