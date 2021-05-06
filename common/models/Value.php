@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use common\models\Post;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "value".
@@ -100,5 +102,18 @@ class Value extends \yii\db\ActiveRecord
             return true;
         }
         return false;
+    }
+
+    public function postCustomParams($post_id) {
+        $val = self::find()->where(['post_id' => $post_id])->all();
+        $result_array = [];
+
+        if (!empty($val)) {
+            for ($i = 0; $i < count($val); $i++) {
+                $result_array[$val[$i]->field->title] = $val[$i]->option->title;
+            }
+
+            return $result_array;
+        }
     }
 }

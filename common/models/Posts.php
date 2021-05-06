@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\classes\RedisCache;
+use yii\helpers\Json;
 
 /**
  * This is the model class for collection "posts".
@@ -66,18 +67,18 @@ class Posts extends \yii\mongodb\ActiveRecord
         ];
     }
 
-    public function create_new_post($post_id, $title, $description, $user_id, $status, $category, $price, $custom_params) {
-        $post = new Posts();
-        $post->post_id = $post_id;
-        $post->title = $title;
-        $post->description = $description;
-        $post->user_id = $user_id;
-        $post->status = $status;
-        $post->category = $category;
-        $post->price = $price;
-        $post->custom_params = $custom_params;
-        $post->created_at = date("Y/m/d");
-        if ($post->save()) {
+    public function create_new_post($post, $params) {
+        $postObj = new Posts();
+        $postObj->post_id = (int)($post['id']);
+        $postObj->title = $post['title'];
+        $postObj->description = $post['description'];
+        $postObj->user_id = (int)($post['user_id']);
+        $postObj->status = $post['status'];
+        $postObj->category = $post['category'];
+        $postObj->price = $post['price'];
+        $postObj->custom_params = $params;
+        $postObj->created_at = date("Y/m/d");
+        if ($postObj->save()) {
             return true;
         }
         return false;
@@ -110,6 +111,21 @@ class Posts extends \yii\mongodb\ActiveRecord
         return $posts;
     }
 
+    public function create_or_update_post($post, $params) {  
+        $post_id = (int)($post['id']);
+        $postObj = self::find()->where(['=', 'post_id', $post_id])->one();
+        if (!empty($postObj)) {
+            $postObj->status = $post['status'];
+            if ($postObj->save()) {
+                $status_id = $post['status_id'];
+                self::cache_post($post_id, $status_id, $postObj);
+            }
+        } else {
+            self::create_new_post($post, $params);
+        }
+        return;
+    }
+
     public function change_post_status($post_id, $new_status) {
         $post = self::find()->where(['=', 'post_id', (int)($post_id)])->one();
         $post->status = $new_status;
@@ -122,11 +138,10 @@ class Posts extends \yii\mongodb\ActiveRecord
         return $post;
     }
 
-    public function cache_post($post_id, $status_id) {
+    public function cache_post($post_id, $status_id, $post_details) {
         $redis = new RedisCache();
         if ($status_id == 1) {
-            $post_details = self::change_post_status($post_id, 'Live');
-            $exist = $redis->exists($post_id);
+            $exist = $redis->exists(strval($post_id));
             if ($exist) {
                 $redis->cachePost($post_details, $post_id, 'Live');
             }

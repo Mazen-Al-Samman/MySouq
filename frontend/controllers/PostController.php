@@ -28,20 +28,12 @@ class PostController extends \yii\web\Controller
         $option_model = new Option();
         $model = new Post();
         $value_model = new Value();
-        $posts_model = new Posts();
 
         if ($model->load(Yii::$app->request->post())) {
 
-            // Data for mongoDB posts.
             $post_data = Yii::$app->request->post();
-            $title = $post_data['Post']['title'];
-            $description = $post_data['Post']['description'];
-            $price = $post_data['Post']['price'];
-            $cat_id = $post_data['cat_id'];
-            $category = $category_model->getTitleById($cat_id)[0]['title'];
-
             // Save post in MySQL.
-            $post_id = $model->create_new_post($_POST['cat_id']);
+            $post_id = $model->create_new_post($post_data['cat_id']);
 
             if ((bool) $post_id) {
                 $params = []; 
@@ -49,11 +41,6 @@ class PostController extends \yii\web\Controller
                     if (strpos($key, 'field') !== false) {
                         $field_id = (int)(substr($key, 5));
                         $option_id = $value;
-
-                        $field_title = $field_model->getTitleById($field_id)[0]['title'];
-                        $option_title = $option_model->getTitleById($option_id)[0]['title'];
-                        $params[$field_title] = $option_title;
-
                         $value_model->new_value($post_id, $field_id, $option_id);
                     }
                 }
@@ -62,10 +49,6 @@ class PostController extends \yii\web\Controller
                 $post_transaction = new PostsLifeCycle();
                 $post_transaction->create_new_transaction(Yii::$app->user->identity->user_role, $post_id, 'New Post', null, 2, date("Y/m/d"));
 
-                // To store the post data in the mongoDB
-                $status = 'Pending';
-                $user_id = Yii::$app->user->id;
-                $posts_model->create_new_post($post_id, $title, $description, $user_id, $status, $category, $price, $params);
                 return $this->redirect(['site/index']); 
             }
         }
@@ -127,5 +110,11 @@ class PostController extends \yii\web\Controller
             $result_array[$i]['options'] = $options;
         }
         return Json::encode($result_array);
+    }
+
+    public function actionTest($post_id) {
+        $post = new Value();
+        $post_data = $post->postCustomParams($post_id);
+        return Json::encode($post_data);
     }
 }

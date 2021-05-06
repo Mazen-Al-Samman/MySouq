@@ -8,6 +8,7 @@ use common\models\Value;
 use common\models\Posts;
 use common\classes\RedisCache;
 use yii\helpers\Json;
+use yii\db\Query;
 
 /**
  * This is the model class for table "post".
@@ -131,10 +132,10 @@ class Post extends \yii\db\ActiveRecord
         $post->status_id = $status_id;
         if ($post->save()) {
             $post_transactions = new PostsLifeCycle();
-            $posts = new Posts();
-            $post_details = $posts->change_post_status($post_id, $status);
+            // $posts = new Posts();
+            // $post_details = $posts->change_post_status($post_id, $status);
             $post_transactions->create_new_transaction($role_id, $post_id, $action, $pre_status, $status_id, date("Y/m/d"));
-            self::cache_post($post_id, $status_id, $post_details);
+            // self::cache_post($post_id, $status_id, $post_details);
         }
         return true;
     }
@@ -153,5 +154,23 @@ class Post extends \yii\db\ActiveRecord
                 $redis->RemovePost($post_id);
             }
         }
+    }
+
+    public function getPostsUpdatedAfter($updated_at) {
+        $query = new Query();
+        $data = $query
+        ->select(['post.*', 'status.title as status', 'category.title as category'])
+        ->from('post')
+        ->join('INNER JOIN', 'status', 'post.status_id = status.id')
+        ->join('INNER JOIN', 'category', 'post.cat_id = category.id')
+        ->orderBy(['post.updated_at' => SORT_ASC])
+        ->limit(5);
+
+        if ($updated_at != '-1') {
+            $data->where(['>', 'post.updated_at', $updated_at]);
+        }
+
+        $data = $data->all();
+        return $data;
     }
 }
