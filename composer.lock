@@ -1636,16 +1636,16 @@
         },
         {
             "name": "yiisoft/yii2-redis",
-            "version": "2.0.14",
+            "version": "2.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-redis.git",
-                "reference": "1cbc7b2138ec9b6ffdc08929f8dc1f41848596aa"
+                "reference": "2d11252cb9d04091469a08b5ebb1faedc11fb2b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-redis/zipball/1cbc7b2138ec9b6ffdc08929f8dc1f41848596aa",
-                "reference": "1cbc7b2138ec9b6ffdc08929f8dc1f41848596aa",
+                "url": "https://api.github.com/repos/yiisoft/yii2-redis/zipball/2d11252cb9d04091469a08b5ebb1faedc11fb2b1",
+                "reference": "2d11252cb9d04091469a08b5ebb1faedc11fb2b1",
                 "shasum": ""
             },
             "require": {
@@ -1706,7 +1706,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-10T11:53:29+00:00"
+            "time": "2021-05-05T22:10:20+00:00"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
