@@ -3,7 +3,7 @@ namespace common\classes;
 use Yii;
 use yii\redis\Cache;
 
-class RedisCache extends Cache {
+class RedisCache extends yii\redis\Cache {
     
     // A new function to get all keys from the Redis.
     public function getkeys() {
@@ -98,6 +98,11 @@ class RedisCache extends Cache {
 
     public function BRPOP($key, $time) {
         $cmd = $this->redis->executeCommand("BRPOP {$key} {$time}");
+        return $cmd;
+    }
+
+    public function RPOP($key) {
+        $cmd = $this->redis->executeCommand("RPOP {$key}");
         return $cmd;
     }
 }

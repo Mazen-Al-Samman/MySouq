@@ -89,6 +89,8 @@ class Post extends \yii\db\ActiveRecord
         $post->status_id = 2;
         $post->user_id = Yii::$app->user->id;
         if($post->save()) {
+            $redis = new RedisCache();
+            $redis->LPUSH('queue', $post->id);
             return $post->id;
         } else {
             return false;
@@ -131,6 +133,8 @@ class Post extends \yii\db\ActiveRecord
         $pre_status = $post->status_id;
         $post->status_id = $status_id;
         if ($post->save()) {
+            $redis = new RedisCache();
+            $redis->LPUSH('queue', $post->id);
             $post_transactions = new PostsLifeCycle();
             $post_transactions->create_new_transaction($role_id, $post_id, $action, $pre_status, $status_id, date("Y/m/d"));
         }

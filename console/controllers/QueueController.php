@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use Yii;
 use common\classes\RedisCache;
+use yii\helpers\Json;
 
 class QueueController extends \yii\web\Controller
 {
@@ -17,6 +18,11 @@ class QueueController extends \yii\web\Controller
 
     public function actionStart() {
         $redis = new RedisCache();
-        echo "Hello";
+        // $data = $redis->BRPOP('queue',2);
+        $redis->LPUSH('queue', 2);
+        // echo Json::encode($data);
+        // if ($data) {
+            
+        // }
     }
 }
