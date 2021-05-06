@@ -28,12 +28,13 @@ class QueueController extends \yii\web\Controller
         $redis = new RedisCache();
 
         while(true) {
-            $data = $redis->RPOP('queue');
+            echo "Reading from the cache !\n";
+            $data = $redis->BRPOP('queue', 50);
             if ($data) {
                 $post_data = $postModel->get_post(($data));
                 $params = $valueModel->postCustomParams(($data));
                 $postsModel->create_or_update_post($post_data, $params);
-                echo "Posts updated";
+                echo "Posts updated \n";
             }
         }
     }
