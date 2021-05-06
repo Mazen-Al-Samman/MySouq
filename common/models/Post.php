@@ -132,10 +132,7 @@ class Post extends \yii\db\ActiveRecord
         $post->status_id = $status_id;
         if ($post->save()) {
             $post_transactions = new PostsLifeCycle();
-            // $posts = new Posts();
-            // $post_details = $posts->change_post_status($post_id, $status);
             $post_transactions->create_new_transaction($role_id, $post_id, $action, $pre_status, $status_id, date("Y/m/d"));
-            // self::cache_post($post_id, $status_id, $post_details);
         }
         return true;
     }
