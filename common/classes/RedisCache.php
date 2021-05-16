@@ -1,9 +1,10 @@
 <?php 
 namespace common\classes;
 use Yii;
+use yii\redis\Cache;
 
-class RedisCache extends yii\redis\Cache {
-    
+class RedisCache extends Cache {
+
     // A new function to get all keys from the Redis.
     public function getkeys() {
         return $this->redis->executeCommand('keys', array('*'));
@@ -88,6 +89,21 @@ class RedisCache extends yii\redis\Cache {
         $params = $post_details['custom_params'];
         $this->CreatePost($post_key, $post_data, $params);
         return true;
+    }
+
+    public function LPUSH($key, $value) {
+        $cmd = $this->redis->executeCommand("LPUSH {$key} {$value}");
+        return (bool) $cmd;
+    }
+
+    public function BRPOP($key, $time) {
+        $cmd = $this->redis->executeCommand("BRPOP {$key} {$time}");
+        return $cmd;
+    }
+
+    public function RPOP($key) {
+        $cmd = $this->redis->executeCommand("RPOP {$key}");
+        return $cmd;
     }
 }
 ?>
