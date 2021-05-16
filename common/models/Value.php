@@ -93,12 +93,20 @@ class Value extends \yii\db\ActiveRecord
         return $this->hasOne(Post::className(), ['id' => 'post_id']);
     }
 
-    public function new_value($post_id, $field_id, $option_id) {
+    public function new_value($post_id, $field_id, $field_value, $type) {
         $value = new Value();
         $value->post_id = $post_id;
         $value->field_id = $field_id;
-        $value->option_id = $option_id;
-        if ($value->save()) {
+        if ($type == 'int') {
+            $value->int_val = $field_value;
+        } else if ($type == 'varchar') {
+            $value->varchar_val = $field_value;
+        } else if ($type == 'float') {
+            $value->float_val = $field_value;
+        } else if ($type == 'option') {
+            $value->option_id = $field_value;
+        }
+        if ($value->save(false)) {
             return true;
         }
         return false;

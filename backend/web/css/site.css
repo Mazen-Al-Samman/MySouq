@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cabin&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
 .font-poppins-400 {
     font-family: 'Poppins';
     font-weight: 400;
@@ -8,5 +9,9 @@
     font-family: 'Cabin';
 }
 .ml5 {
-    margin-left: 700px;
+    margin-left: 600px;
+}
+.params {
+    height: 100px;
+    overflow: auto;
 }

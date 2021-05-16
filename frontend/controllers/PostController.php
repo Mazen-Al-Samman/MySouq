@@ -8,6 +8,7 @@ use common\models\Value;
 use common\models\PostsLifeCycle;
 use common\models\Field;
 use common\models\Category;
+use common\models\SubCategory;
 use common\models\Posts;
 use common\classes\RedisCache;
 use yii\helpers\Json;
@@ -28,20 +29,23 @@ class PostController extends \yii\web\Controller
         $option_model = new Option();
         $model = new Post();
         $value_model = new Value();
+        $sub_cat_model = new SubCategory();
 
         if ($model->load(Yii::$app->request->post())) {
-
             $post_data = Yii::$app->request->post();
             // Save post in MySQL.
-            $post_id = $model->create_new_post($post_data['cat_id']);
+            $post_id = $model->create_new_post($post_data['cat_id'], $post_data['sub_cat_id']);
 
             if ((bool) $post_id) {
                 $params = []; 
                 foreach (Yii::$app->request->post() as $key => $value) {
                     if (strpos($key, 'field') !== false) {
+                        $field_value = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
+                        $first_underscore = strpos($key, '_');
+                        $second_underscore = strpos($key, '_', $first_underscore + 1);
+                        $type = substr($key, $first_underscore + 1, $second_underscore - ($first_underscore + 1));
                         $field_id = (int)(substr($key, 5));
-                        $option_id = $value;
-                        $value_model->new_value($post_id, $field_id, $option_id);
+                        $value_model->new_value($post_id, $field_value, $value, $type);
                     }
                 }
 
@@ -55,6 +59,7 @@ class PostController extends \yii\web\Controller
 
         return $this->render('index', [
             'model' => $model,
+            'subCat' => $sub_cat_model,
             'url' => Url::base()
         ]);
     }
@@ -90,6 +95,12 @@ class PostController extends \yii\web\Controller
         } else {
             return $this->redirect(['site/index']);
         }
+    }
+
+    public function actionSubcat($cat_id) {
+        $country_id = Yii::$app->user->identity->country_id;
+        $sub_cat_model = new SubCategory();
+        return Json::encode($sub_cat_model->getSubCat($cat_id));
     }
 
     public function actionParams($cat_id) {

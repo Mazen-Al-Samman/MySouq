@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Json;
 /* @var $this yii\web\View */
 $this->title = 'All Posts';
 ?>
@@ -20,12 +21,27 @@ foreach ($posts as $post) {
         <hr>
         <p class="font-poppins-400 text-danger font-weight-bold">$ <?= $post->price ?></p>
         <p class="card-text font-weight-bold"><?=Html::encode($post->description, $doubleEncode = true)?></p>
-        <div>
+        <div class="params">
           <?php 
           $len = count($post->values);
+          $idx = 0;
           for ($i = 0; $i < $len; $i++) { 
+            $type = $post->subCat->fieldAssigns[$idx]->type;
+            $idx += 2;
           ?>
-          <p class="font-poppins-400 bg-dark text-light p-2 rounded"><?= $post->values[$i]->field->title ?> : <?= $post->values[$i]->option->title ?></p>
+          <p class="font-poppins-400 bg-dark text-light p-2 rounded"><?= $post->values[$i]->field->title ?>
+           :
+          <?php 
+            if ($type == 'Int') {
+              echo $post->values[$i]->int_val;
+            } else if ($type == 'Float') {
+              echo $post->values[$i]->float_val;
+            } else if ($type == 'VarChar') {
+              echo $post->values[$i]->varchar_val;
+            } else if ($type == 'Option') {
+              echo $post->values[$i]->option->title;
+            }?>
+          </p>
           <?php
           }
           ?>
