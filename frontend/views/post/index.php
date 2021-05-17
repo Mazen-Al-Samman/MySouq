@@ -2,7 +2,6 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \common\models\LoginForm */
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -12,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use aryelds\sweetalert\SweetAlert;
 
 $this->title = 'New Post';
 $this->params['breadcrumbs'][] = $this->title;
@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h5 class="modal-title" id="exampleModalLabel">Select a category</h5>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body font-poppins-400">
         <form id="cat-form">
             <label for="cat">Category</label>
             <?= Html::activeDropDownList($model, 'cat_id',
@@ -115,7 +115,7 @@ $this->registerJs("
                         }
                         html += `</select>`;
                     } else if (field.type == 'Int'){
-                        html += `<input type='number' name=field_int_` + field.field_id + ` class='form-control mb-4' />`; 
+                        html += `<input type='number' required name=field_int_` + field.field_id + ` class='form-control mb-4' />`; 
                     } else if (field.type == 'VarChar'){
                         html += `<input type='text' name=field_varchar_` + field.field_id + ` class='form-control mb-4' />`; 
                     } else if (field.type == 'Float') {

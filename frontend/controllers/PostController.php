@@ -59,7 +59,6 @@ class PostController extends \yii\web\Controller
 
         return $this->render('index', [
             'model' => $model,
-            'subCat' => $sub_cat_model,
             'url' => Url::base()
         ]);
     }
