@@ -93,12 +93,20 @@ class Value extends \yii\db\ActiveRecord
         return $this->hasOne(Post::className(), ['id' => 'post_id']);
     }
 
-    public function new_value($post_id, $field_id, $option_id) {
+    public function new_value($post_id, $field_id, $field_value, $type) {
         $value = new Value();
         $value->post_id = $post_id;
         $value->field_id = $field_id;
-        $value->option_id = $option_id;
-        if ($value->save()) {
+        if ($type == 'int') {
+            $value->int_val = $field_value;
+        } else if ($type == 'varchar') {
+            $value->varchar_val = $field_value;
+        } else if ($type == 'float') {
+            $value->float_val = $field_value;
+        } else if ($type == 'option') {
+            $value->option_id = $field_value;
+        }
+        if ($value->save(false)) {
             return true;
         }
         return false;
@@ -110,7 +118,17 @@ class Value extends \yii\db\ActiveRecord
 
         if (!empty($val)) {
             for ($i = 0; $i < count($val); $i++) {
-                $result_array[$val[$i]->field->title] = $val[$i]->option->title;
+                $value = null;
+                if ($val[$i]->int_val) {
+                    $value = $val[$i]->int_val;
+                } else if ($val[$i]->float_val) {
+                    $value = $val[$i]->float_val;
+                } else if ($val[$i]->varchar_val) {
+                    $value = $val[$i]->varchar_val;
+                } else if ($val[$i]->option_id) {
+                    $value = $val[$i]->option->title;
+                }
+                $result_array[$val[$i]->field->title] = $value;
             }
 
             return $result_array;

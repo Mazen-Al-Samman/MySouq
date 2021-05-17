@@ -10,3 +10,10 @@
 .ml5 {
     margin-left: 500px;
 }
+.params {
+    height:112px;
+    overflow: auto;
+}
+::-webkit-scrollbar {
+    display: none;
+}

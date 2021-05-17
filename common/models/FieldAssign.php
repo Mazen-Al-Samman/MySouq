@@ -12,30 +12,41 @@ use Yii;
  * @property int $cat_id
  * @property int $country_id
  * @property string $label
+ * @property string|null $type
  *
- * @property Category $cat
+ * @property SubCategory $cat
  * @property Country $country
  * @property Field $field
  */
 class FieldAssign extends \yii\db\ActiveRecord
 {
+    /**
+     * {@inheritdoc}
+     */
     public static function tableName()
     {
         return 'field_assign';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
             [['field_id', 'cat_id', 'country_id', 'label'], 'required'],
             [['field_id', 'cat_id', 'country_id'], 'integer'],
+            [['type'], 'string'],
             [['label'], 'string', 'max' => 255],
-            [['cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['cat_id' => 'id']],
+            [['cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => SubCategory::className(), 'targetAttribute' => ['cat_id' => 'id']],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::className(), 'targetAttribute' => ['country_id' => 'id']],
             [['field_id'], 'exist', 'skipOnError' => true, 'targetClass' => Field::className(), 'targetAttribute' => ['field_id' => 'id']],
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function attributeLabels()
     {
         return [
@@ -44,19 +55,35 @@ class FieldAssign extends \yii\db\ActiveRecord
             'cat_id' => Yii::t('app', 'Cat ID'),
             'country_id' => Yii::t('app', 'Country ID'),
             'label' => Yii::t('app', 'Label'),
+            'type' => Yii::t('app', 'Type'),
         ];
     }
 
+    /**
+     * Gets query for [[Cat]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getCat()
     {
-        return $this->hasOne(Category::className(), ['id' => 'cat_id']);
+        return $this->hasOne(SubCategory::className(), ['id' => 'cat_id']);
     }
 
+    /**
+     * Gets query for [[Country]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getCountry()
     {
         return $this->hasOne(Country::className(), ['id' => 'country_id']);
     }
 
+    /**
+     * Gets query for [[Field]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getField()
     {
         return $this->hasOne(Field::className(), ['id' => 'field_id']);

@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use kartik\depdrop\DepDrop;
 
 use Yii;
 use common\models\PostsLifeCycle;
@@ -18,34 +19,49 @@ use yii\db\Query;
  * @property string $description
  * @property int $status_id
  * @property int $cat_id
+ * @property int $sub_cat_id
  * @property float $price
  * @property int $user_id
+ * @property string $created_at
+ * @property string $updated_at
  *
  * @property Category $cat
  * @property Status $status
  * @property User $user
+ * @property SubCategory $subCat
  * @property Value[] $values
  */
 class Post extends \yii\db\ActiveRecord
 {
+    /**
+     * {@inheritdoc}
+     */
     public static function tableName()
     {
         return 'post';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
-            [['title', 'description', 'status_id', 'cat_id', 'price', 'user_id'], 'required'],
-            [['status_id', 'cat_id', 'user_id'], 'integer'],
+            [['title', 'description', 'status_id', 'cat_id', 'sub_cat_id', 'price', 'user_id'], 'required'],
+            [['status_id', 'cat_id', 'sub_cat_id', 'user_id'], 'integer'],
             [['price'], 'number'],
+            [['created_at', 'updated_at'], 'safe'],
             [['title', 'description'], 'string', 'max' => 255],
             [['cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['cat_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['status_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['sub_cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => SubCategory::className(), 'targetAttribute' => ['sub_cat_id' => 'id']],
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function attributeLabels()
     {
         return [
@@ -54,41 +70,74 @@ class Post extends \yii\db\ActiveRecord
             'description' => Yii::t('app', 'Description'),
             'status_id' => Yii::t('app', 'Status ID'),
             'cat_id' => Yii::t('app', 'Cat ID'),
+            'sub_cat_id' => Yii::t('app', 'Sub Cat ID'),
             'price' => Yii::t('app', 'Price'),
             'user_id' => Yii::t('app', 'User ID'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 
+    /**
+     * Gets query for [[Cat]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getCat()
     {
         return $this->hasOne(Category::className(), ['id' => 'cat_id']);
     }
 
+    /**
+     * Gets query for [[Status]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getStatus()
     {
         return $this->hasOne(Status::className(), ['id' => 'status_id']);
     }
 
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
+    /**
+     * Gets query for [[SubCat]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubCat()
+    {
+        return $this->hasOne(SubCategory::className(), ['id' => 'sub_cat_id']);
+    }
+
+    /**
+     * Gets query for [[Values]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getValues()
     {
         return $this->hasMany(Value::className(), ['post_id' => 'id']);
     }
-
     // Function to create a new post.
-    public function create_new_post($cat_id){
+    public function create_new_post($cat_id, $sub_cat_id){
         $post = new Post();
         $post->title = $this->title;
         $post->description = $this->description;
         $post->cat_id = $cat_id;
+        $post->sub_cat_id = $sub_cat_id;
         $post->price = $this->price;
         $post->status_id = 2;
         $post->user_id = Yii::$app->user->id;
-        if($post->save()) {
+        if($post->save(false)) {
             $redis = new RedisCache();
             $redis->LPUSH('queue', $post->id);
             return $post->id;
