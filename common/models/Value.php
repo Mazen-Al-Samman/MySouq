@@ -118,7 +118,17 @@ class Value extends \yii\db\ActiveRecord
 
         if (!empty($val)) {
             for ($i = 0; $i < count($val); $i++) {
-                $result_array[$val[$i]->field->title] = $val[$i]->option->title;
+                $value = null;
+                if ($val[$i]->int_val) {
+                    $value = $val[$i]->int_val;
+                } else if ($val[$i]->float_val) {
+                    $value = $val[$i]->float_val;
+                } else if ($val[$i]->varchar_val) {
+                    $value = $val[$i]->varchar_val;
+                } else if ($val[$i]->option_id) {
+                    $value = $val[$i]->option->title;
+                }
+                $result_array[$val[$i]->field->title] = $value;
             }
 
             return $result_array;

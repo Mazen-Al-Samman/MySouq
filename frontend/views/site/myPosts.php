@@ -27,7 +27,7 @@ for ($i = 0; $i < count($posts); $i++) {
         <hr>
         <p class="font-poppins-400 text-danger font-weight-bold">$ <?= $posts[$i]['price'] ?></p>
         <p class="card-text font-poppins-400 font-weight-bold"><?=Html::encode($posts[$i]['description'], $doubleEncode = true)?></p>
-        <div>
+        <div class="params">
           <?php 
           foreach ($posts[$i]['custom_params'] as $field => $option) { 
           ?>
