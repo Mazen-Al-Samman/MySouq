@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "field_assign".
@@ -92,5 +93,24 @@ class FieldAssign extends \yii\db\ActiveRecord
     public function get_fields_for_country($country_id, $cat_id) {
         $fields = $this->find()->where(['country_id' => $country_id, 'cat_id' => $cat_id])->all();
         return $fields;
+    }
+
+    public function check_field_option_category($cat_id, $field_id, $option_id, $country_id) {
+        if (empty($cat_id) || empty($field_id) || empty($option_id)) {
+            return false;
+        }
+        $query = new Query();
+        $data = $query
+        ->select(['COUNT(field_assign.id) AS TOTAL_COUNT'])
+        ->from('field_assign')
+        ->join('INNER JOIN', 'field', 'field_assign.field_id = field.id')
+        ->join('INNER JOIN', '`option`', 'field_assign.field_id = `option`.field_id')
+        ->where(['field_assign.field_id' => $field_id, '`option`.id' => $option_id, 'field_assign.cat_id' => $cat_id])
+        ->all();
+        $check = (int)($data[0]['TOTAL_COUNT']);
+        if ($check > 0) {
+            return true;
+        }
+        return false;
     }
 }

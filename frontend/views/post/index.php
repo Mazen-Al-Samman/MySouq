@@ -12,6 +12,16 @@ use yii\helpers\Json;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use aryelds\sweetalert\SweetAlert;
+if ($wrong) {
+    echo SweetAlert::widget([
+        'options' => [
+            'title' => Html::tag('h4', 'Error !!', ['class' => 'font-poppins-400']),
+            'text' => Html::tag('h6', 'Please enter a valid data.', ['class' => 'font-poppins-400']),
+            'type' => SweetAlert::TYPE_ERROR,
+            'html' => true
+        ]
+    ]);
+}
 
 $this->title = 'New Post';
 $this->params['breadcrumbs'][] = $this->title;
@@ -80,6 +90,7 @@ $this->registerJs("
         backdrop: 'static',
         keyboard: false
     });
+
     $('#cat').on('change', function(){
         selected_cat = $('#cat').val();
         $.ajax ({

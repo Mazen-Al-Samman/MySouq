@@ -17,3 +17,6 @@
 ::-webkit-scrollbar {
     display: none;
 }
+.sweet-alert[data-has-cancel-button=false] button {
+    background-color: red !important;
+}

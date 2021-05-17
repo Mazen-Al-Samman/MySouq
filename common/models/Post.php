@@ -138,8 +138,6 @@ class Post extends \yii\db\ActiveRecord
         $post->status_id = 2;
         $post->user_id = Yii::$app->user->id;
         if($post->save(false)) {
-            $redis = new RedisCache();
-            $redis->LPUSH('queue', $post->id);
             return $post->id;
         } else {
             return false;

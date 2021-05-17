@@ -33,33 +33,65 @@ class PostController extends \yii\web\Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $post_data = Yii::$app->request->post();
+            $cat_id = $post_data['cat_id'];
+            $sub_cat_id = $post_data['sub_cat_id'];
+            $params_array = [];
+            $country_id = Yii::$app->user->identity->country_id;
+            foreach ($post_data as $key => $value) {
+
+                // This block of code will check if the option for the right filed, and both of them for the right category.
+                if (strpos($key, 'field') !== false) {
+                    $field_value = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
+                    $first_underscore = strpos($key, '_');
+                    $second_underscore = strpos($key, '_', $first_underscore + 1);
+                    $type = substr($key, $first_underscore + 1, $second_underscore - ($first_underscore + 1));
+                    $field_id = (int)(substr($key, 5));
+                    $param = (object)['field_id' => $field_value, 'type' => $type, 'value' => $value];
+                    $params_array[] = $param;
+                    if ($type == 'option') {
+                        $check = $field_assign_model->check_field_option_category($sub_cat_id, $field_value, $value, $country_id);
+                        if (!$check) {
+                            return $this->render('index', [
+                                'model' => $model,
+                                'url' => Url::base(),
+                                'wrong' => true
+                            ]);
+                        }
+                    } else {
+                        if (empty($value)) {
+                            return $this->render('index', [
+                                'model' => $model,
+                                'url' => Url::base(),
+                                'wrong' => true
+                            ]);
+                        }
+                    }
+                }
+            }
             // Save post in MySQL.
-            $post_id = $model->create_new_post($post_data['cat_id'], $post_data['sub_cat_id']);
+            $post_id = $model->create_new_post($cat_id, $sub_cat_id);
 
             if ((bool) $post_id) {
-                $params = []; 
-                foreach (Yii::$app->request->post() as $key => $value) {
-                    if (strpos($key, 'field') !== false) {
-                        $field_value = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
-                        $first_underscore = strpos($key, '_');
-                        $second_underscore = strpos($key, '_', $first_underscore + 1);
-                        $type = substr($key, $first_underscore + 1, $second_underscore - ($first_underscore + 1));
-                        $field_id = (int)(substr($key, 5));
-                        $value_model->new_value($post_id, $field_value, $value, $type);
-                    }
+                for ($i = 0; $i < count($params_array); $i++) {
+                    $field_id = $params_array[$i]->field_id;
+                    $type = $params_array[$i]->type;
+                    $value = $params_array[$i]->value;
+                    $value_model->new_value($post_id, $field_id, $value, $type);
                 }
 
                 // To store the transaction details in mongoDB.
                 $post_transaction = new PostsLifeCycle();
                 $post_transaction->create_new_transaction(Yii::$app->user->identity->user_role, $post_id, 'New Post', null, 2, date("Y/m/d"));
-
+                $redis = new RedisCache();
+                $redis->LPUSH('queue', $post_id);
                 return $this->redirect(['site/index']); 
             }
         }
 
         return $this->render('index', [
             'model' => $model,
-            'url' => Url::base()
+            'url' => Url::base(),
+            'wrong' => false
         ]);
     }
 
@@ -126,5 +158,10 @@ class PostController extends \yii\web\Controller
         $post = new Value();
         $post_data = $post->postCustomParams($post_id);
         return Json::encode($post_data);
+    }
+
+    public function actionCheck($cat_id, $field_id, $option_id) {
+        $fieldAddignModel = new FieldAssign();
+        return $fieldAddignModel->check_field_option_category($cat_id, $field_id, $option_id);
     }
 }

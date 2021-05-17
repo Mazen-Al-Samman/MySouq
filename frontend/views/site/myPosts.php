@@ -29,6 +29,7 @@ for ($i = 0; $i < count($posts); $i++) {
         <p class="card-text font-poppins-400 font-weight-bold"><?=Html::encode($posts[$i]['description'], $doubleEncode = true)?></p>
         <div class="params">
           <?php 
+          $len = count($posts[$i]['custom_params']);
           foreach ($posts[$i]['custom_params'] as $field => $option) { 
           ?>
           <p class="font-poppins-400 bg-dark text-light p-2 rounded"><?= $field ?> : <?= $option ?></p>
@@ -36,6 +37,11 @@ for ($i = 0; $i < count($posts); $i++) {
           }
           ?>
         </div>
+        <?php if ($len > 2){ ?>
+          <img src="https://img.icons8.com/ios-filled/15/000000/expand-arrow--v1.png"/>
+        <?php } else { ?>
+          <img src="https://img.icons8.com/windows/20/000000/--checkmark-yes.png"/>
+        <?php } ?>
         <hr>
         <?=Html::a('Delete', ['post/delete', 'id' => $posts[$i]['post_id']], ['class' => 'btn-danger float-right btn font-poppins-400', 'onclick' => "return confirm('Are you sure you want to delete post?')"])?>
         <?=Html::a('More', ['post/more', 'id' => $posts[$i]['post_id']], ['class' => 'btn-info float-left btn font-poppins-400'])?>
