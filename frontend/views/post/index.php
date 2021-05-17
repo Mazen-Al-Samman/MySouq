@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Select a category</h5>
+        <h5 class="modal-title font-poppins-400 text-dark" id="exampleModalLabel">Select a category</h5>
         </button>
       </div>
       <div class="modal-body font-poppins-400">
