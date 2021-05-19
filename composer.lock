@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00bea803584242374571dcc7d0d28be5",
+    "content-hash": "69031a966e1fe3332189144af0af78c3",
     "packages": [
         {
             "name": "aryelds/yii2-sweet-alert",
@@ -510,6 +510,69 @@
                 "source": "https://github.com/ezyang/htmlpurifier/tree/master"
             },
             "time": "2020-06-29T00:56:53+00:00"
+        },
+        {
+            "name": "index0h/yii2-log",
+            "version": "0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/index0h/yii2-log.git",
+                "reference": "a470a913e953a190880ced04ddfa13fe2ecc4811"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/index0h/yii2-log/zipball/a470a913e953a190880ced04ddfa13fe2ecc4811",
+                "reference": "a470a913e953a190880ced04ddfa13fe2ecc4811",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "2.0.*",
+                "yiisoft/yii2-composer": "2.0.*"
+            },
+            "require-dev": {
+                "codeception/codeception": "2.0.*",
+                "yiisoft/yii2-elasticsearch": "2.0.*",
+                "yiisoft/yii2-redis": "2.0.*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "writable": [
+                    "tests/_runtime",
+                    "tests/_log"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "index0h\\log\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roman Levishchenko",
+                    "email": "index.0h@gmail.com"
+                }
+            ],
+            "description": "Many Yii2 log targets",
+            "homepage": "https://github.com/index0h/yii2-log",
+            "keywords": [
+                "elasticsearch",
+                "log",
+                "log-target",
+                "logstash",
+                "redis",
+                "yii2",
+                "yii2-log"
+            ],
+            "support": {
+                "issues": "https://github.com/index0h/yii2-log/issues",
+                "source": "https://github.com/index0h/yii2-log"
+            },
+            "time": "2015-05-24T22:32:44+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -3017,6 +3080,88 @@
                 }
             ],
             "time": "2020-06-24T00:04:01+00:00"
+        },
+        {
+            "name": "yiisoft/yii2-httpclient",
+            "version": "2.0.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiisoft/yii2-httpclient.git",
+                "reference": "470e9066ae780f0ca20827d3f6f84eca6bbb0991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiisoft/yii2-httpclient/zipball/470e9066ae780f0ca20827d3f6f84eca6bbb0991",
+                "reference": "470e9066ae780f0ca20827d3f6f84eca6bbb0991",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2.0.13"
+            },
+            "require-dev": {
+                "cweagans/composer-patches": "^1.7",
+                "phpunit/phpunit": "4.8.34"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                },
+                "composer-exit-on-patch-failure": true,
+                "patches": {
+                    "phpunit/phpunit-mock-objects": {
+                        "Fix PHP 7 and 8 compatibility": "https://yiisoft.github.io/phpunit-patches/phpunit_mock_objects.patch"
+                    },
+                    "phpunit/phpunit": {
+                        "Fix PHP 7 compatibility": "https://yiisoft.github.io/phpunit-patches/phpunit_php7.patch",
+                        "Fix PHP 8 compatibility": "https://yiisoft.github.io/phpunit-patches/phpunit_php8.patch"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii\\httpclient\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Klimov",
+                    "email": "klimov.paul@gmail.com"
+                }
+            ],
+            "description": "HTTP client extension for the Yii framework",
+            "keywords": [
+                "curl",
+                "http",
+                "httpclient",
+                "yii2"
+            ],
+            "support": {
+                "forum": "http://www.yiiframework.com/forum/",
+                "irc": "irc://irc.freenode.net/yii",
+                "issues": "https://github.com/yiisoft/yii2-httpclient/issues",
+                "source": "https://github.com/yiisoft/yii2-httpclient",
+                "wiki": "http://www.yiiframework.com/wiki/"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/yiisoft",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/yiisoft",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/yiisoft/yii2-httpclient",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-12-23T16:52:14+00:00"
         },
         {
             "name": "yiisoft/yii2-mongodb",

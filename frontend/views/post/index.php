@@ -13,6 +13,21 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use aryelds\sweetalert\SweetAlert;
 if ($wrong) {
+    $user_id = Yii::$app->user->id;
+    $user_name = Yii::$app->user->identity->username;
+    $date = date("Y/m/d h:i:s a");
+    $error = 'Invalid post data!';
+    $desc = 'User try to create a post with an invalid data.';
+    Yii::info(
+        Json::encode(['ErrorData' => [
+            'user_id' => $user_id,
+            'user_name' => $user_name,
+            'date_time' => $date,
+            'error_type' => $error,
+            'error_desc' => $desc
+        ]]), 
+        'PostError'
+    );
     echo SweetAlert::widget([
         'options' => [
             'title' => Html::tag('h4', 'Error !!', ['class' => 'font-poppins-400']),

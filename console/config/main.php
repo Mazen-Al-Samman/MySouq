@@ -28,6 +28,11 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'index0h\\log\\LogstashTarget',
+                    'dsn' => 'tcp://localhost:3333',
+                    'categories' => ['PostError'],
+                ],
             ],
         ],
     ],
