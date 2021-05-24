@@ -1,9 +1,9 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <p>A simple website for online store, that has a different technologies like [ Redis cache, MySQL DB, MongoDB, ELK Stack, ... ] Using php Yii2 Framework.</p>
         <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
     </a>
     <h1 align="center">Yii 2 Advanced Project Template</h1>
+    <p>A simple website for online store, that has a different technologies like [ Redis cache, MySQL DB, MongoDB, ELK Stack, ... ] Using php Yii2 Framework.</p>
     <br>
 </p>
 
